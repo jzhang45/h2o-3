@@ -1,3 +1,4 @@
+import ai.h2o.ci.BuildResult
 import groovy.json.JsonSlurper
 
 def call() {
@@ -6,7 +7,12 @@ def call() {
 
 class PipelineUtils {
 
+    public static final String REPO_URL = 'https://github.com/h2oai/h2o-3'
+
     private static final String PIPELINE_SCRIPTS_STASH_NAME = 'pipeline_scripts'
+
+    private static final List<String> PIPELINE_ALWAYS_RECIPIENTS = ['michalr@h2o.ai']
+    private static final List<String> PIPELINE_FAILURE_RECIPIENTS = ['michalk@h2o.ai'] + PIPELINE_ALWAYS_RECIPIENTS
 
     String stageNameToDirName(stageName) {
         if (stageName != null) {
@@ -71,6 +77,14 @@ class PipelineUtils {
             return jsonResponse.tags.contains(version)
         }
     }
+
+    List<String> getRelevantPipelineRecipients(final BuildResult result) {
+        if (result == BuildResult.SUCCESS) {
+            return PIPELINE_ALWAYS_RECIPIENTS
+        }
+        return PIPELINE_FAILURE_RECIPIENTS
+    }
+
 }
 
 return this
