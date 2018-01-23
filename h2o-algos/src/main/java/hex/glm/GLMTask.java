@@ -863,8 +863,11 @@ public abstract class GLMTask  {
         int y = (int) ys[i];
         double logSumExp = computeMultinomialEtas(etas[i], exps);
         _likelihood -= w * (etas[i][y] - logSumExp);
-        for (int c = 0; c < K; ++c)
-          etas[i][c] = w * (exps[c + 1] - (y == c ? 1 : 0));
+        for (int c = 0; c < K; ++c) {
+          int yclass = y == c ? 1 : 0;
+          etas[i][c] = w * (exps[c + 1]*yclass - yclass); // fixed bug
+          //etas[i][c] = w * (exps[c + 1] - (y == c ? 1 : 0));
+        }
       }
     }
 
